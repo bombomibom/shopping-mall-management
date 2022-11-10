@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>매출조회 화면</title>
+<link rel="stylesheet" href="/css/common.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="/js/common.js"></script>
+<script type="text/javascript">
+
+	$(document).ready(function(){
+		ajaxGetType("/get_user_sales", showUserSalesList);
+    });
+	
+</script>
+</head>
+<body>
+	<div th:insert="/header"></div>
+    <section>
+        <h2>회원매출조회</h2>
+        <table class="list-wrap">
+        	<thead>
+        		<tr>
+        			<th>회원번호</th>
+        			<th>회원성명</th>
+        			<th>고객등급</th>
+        			<th>매출</th>
+        		</tr>
+        	</thead>
+        	<tbody>
+        		
+        	</tbody>
+        </table>
+    </section>
+    <div th:insert="/footer"></div>
+</body>
+</html>

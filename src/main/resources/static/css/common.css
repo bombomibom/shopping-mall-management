@@ -1,0 +1,77 @@
+
+/* 공통 */
+
+*{
+    padding: 0;
+    margin: 0;
+}
+a{
+	text-decoration: none;
+	color: #000;
+}
+li{
+	list-style: none;
+}
+header{
+    background-color: lightgray;
+    padding: 25px
+}
+header h1{
+    text-align: center;
+}
+nav{
+	background-color: #efefef;
+}
+nav ul{
+	display: flex;
+}
+nav a{
+	padding: 20px;
+	display: block;
+} 
+nav a:hover{
+	background-color: lightgray;
+	font-weight: bold; 
+}
+section h2{
+	text-align: center;
+	padding: 20px 0;
+}
+section p{
+	margin-left: 20px;
+}
+footer{
+	width: 100%;
+	background-color: lightgray;
+    padding: 25px;
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+footer h3{
+	text-align: center;
+}
+
+section .form-wrap{
+	text-align: center;
+	width: 50%;
+	padding: 20px 0;
+	transform: translateX(50%);
+}
+
+section .list-wrap{
+	border-collapse: collapse;
+	text-align: center;
+	width: 50%;
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
+	border: 1px solid lightgray;
+}
+table th, td{
+	padding: 10px;
+	border: 1px solid lightgray;
+}
+
+/* 홈쇼핑 회원 등록 */

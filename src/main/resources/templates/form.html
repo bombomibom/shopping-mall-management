@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>등록/수정화면</title>
+<link rel="stylesheet" href="/css/common.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="/js/common.js"></script>
+<script>
+
+	
+	function confirmInput(targetSection, actionName, requestUrl){
+	
+		var patternSpace = /\s/g;
+		var patternKor = /^[가-힣]+$/;
+		var patternNum = /^[0-9]*$/;
+		var patternUserGrade = /^[A-C]+$/;
+		var patternPhone = /^[0-9]{3}-[0-9]{4}-[0-9]{4}/;
+		var columnNameList = [];
+		var columnValueList = [];
+		var dataObject = new Object();
+		var allInputCheck = 0;
+		
+		targetSection.find("input").each(function(){
+			
+			var labelText = $(this).prev().text();
+			var inputClass = $(this).attr('class');
+			
+			// 1. 빈 항목 체크
+			if($(this).val() == ""){
+				alert(labelText + "을(를) 입력하지 않았습니다.");
+				$(this).focus();
+				return false;
+			} 
+			
+			// 2. minLen 확인 - 여기서는 회원성명만
+			if($(this).attr('minLength') > $(this).val().length){ 
+    			//console.log($(this));
+    			alert(labelText + "는 최소 " + $(this).attr('minLength') + "자 이상 입력해주세요.");
+    			return false;
+    		} 
+			
+			// 3. value 값 한글/영어/숫자 확인
+			if(inputClass == "kor-val"){
+    			if($(this).attr('id') == "custName"){
+    				if(patternSpace.test($(this).val())){
+						alert(labelText + "의 공백 제거 후 다시 입력해주세요.");
+						$(this).val("");
+						return false;
+    				} else {
+    					if(patternKor.test($(this).val()) == false){
+              				alert(labelText + "는(은) 한글만 입력해주세요.(자음, 모음만 있는 한글은 처리하지 않습니다)");
+              				return false;
+           				}
+    				}
+    			} else if($(this).attr('id') == "address"){
+    				if(!patternSpace.test($(this).val())){
+    					if(patternKor.test($(this).val()) == false){
+              				alert(labelText + "는(은) 한글만 입력해주세요.(자음, 모음만 있는 한글은 처리하지 않습니다)");
+              				return false;
+           				}
+    				}
+    			}
+   				
+    		} else if(inputClass == "num-val"){
+    			if(patternNum.test($(this).val()) == false){
+    				alert(labelText + "는(은) 숫자만 입력해주세요.");
+    				return false;
+    			}
+    		} else if(inputClass == "user-grade-val"){
+    			if(patternUserGrade.test($(this).val()) == false){
+    				alert(labelText + "에 맞춰 입력해주세요.");
+    				return false;
+    			}
+    		} else if(inputClass == "fix-length"){
+    			if($(this).attr('maxLength') != $(this).val().length){
+    				alert(labelText + "는(은) " + $(this).attr('maxLength') + "자 입력해주세요.");
+    				return false;
+    			} else if($(this).attr('id') == "phone"){
+    				if($(this).val().charAt(3) != "-" || $(this).val().charAt(8) != "-"){
+    					alert(labelText + "는(은) " + $(this).attr('placeholder') + "에 맞춰 입력해주세요.");
+    					return false;
+    				} else if(patternPhone.test($(this).val()) == false){
+    					if(patternSpace.test($(this).val())){
+    						alert(labelText + "의 공백 제거 후 다시 입력해주세요.");
+    						$(this).val("");
+    						return false;
+        				} else {
+        					alert(labelText + "는(은) " + "숫자 및 하이픈만 입력해주세요.");
+        					return false;
+        				}
+    				}
+    			} else if($(this).attr('id') == "city"){
+    				if(patternNum.test($(this).val()) == false){
+          				alert(labelText + "는(은) 숫자만 입력해주세요.");
+          				return false;
+       				}
+    			}
+    		}
+    		
+			console.log($(this));
+			allInputCheck++;
+			
+			var columnName = $(this).attr("id");
+			var columnValue = $(this).val();
+			
+			columnNameList.push(columnName);
+			columnValueList.push(columnValue);
+		})
+		
+		for(let i = 0; i < columnNameList.length; i++){
+			dataObject[columnNameList[i]] = columnValueList[i];
+		}
+		//console.log(dataObject);
+	
+		console.log(allInputCheck);
+		console.log(targetSection.find("input").length);
+		
+		if(allInputCheck == targetSection.find("input").length){
+			ajaxPostType(actionName, dataObject, alert, requestUrl);
+		}
+	}
+
+	$(document).ready(function(){
+
+	    console.log('${userInfo}');
+		
+    });
+</script>
+</head>
+<body>
+	<div th:insert="/header"></div>
+    <section th:if="${mode == 'insert'}">
+        <h2>홈쇼핑 회원 등록</h2>
+        <div class="general-user form-wrap">
+			<div class="form-group">
+		    	<label for="custNo">회원번호(자동발생)</label>
+		    	<input type="text" id="custNo" th:value="${userNo}" readonly>
+			</div>
+			<div class="form-group">
+		    	<label for="custName">회원성명</label>
+		    	<input type="text" class="kor-val" id="custName" minlength="2" maxlength="10">
+			</div>
+		  	<div class="form-group">
+		    	<label for="phone">회원전화</label>
+		    	<input type="text" class="fix-length" id="phone" maxlength="13" placeholder="010-0000-0000">
+		  	</div>
+		  	<div class="form-group">
+		    	<label for="address">회원주소</label>
+		    	<input type="text" class="kor-val" id="address" maxlength="30">
+		  	</div>
+			<div class="form-group">
+		    	<label for="strJoinDate">가입일자</label>
+		    	<input type="text" id="strJoinDate" th:value="${nowDate}" readonly>
+			</div>
+			<div class="form-group">
+		    	<label for="grade">고객등급 [A:VIP, B:일반, C:직원]</label>
+			    <input type="text" class="user-grade-val" id="grade" maxlength="1">
+			</div>
+			<div class="form-group">
+		    	<label for="city">도시코드</label>
+			    <input type="text" class="fix-length" id="city" maxlength="2">
+			</div>
+			<div class="btn-group">
+				<button onclick="confirmInput($(this).parent().parent(), '/insert_action', '/');">등록</button>
+				<button onclick="location.href='/userList'">조회</button>
+			</div>
+		</div>
+    </section>
+    <section th:if="${mode == 'update'}" th:each="userInfo, i: ${userInfo}">
+        <h2>홈쇼핑 회원 수정</h2>
+        <div class="general-user form-wrap">
+			<div class="form-group">
+		    	<label for="custNo">회원번호(자동발생)</label>
+		    	<input type="text" id="custNo" th:value="${userInfo.custNo}" readonly>
+			</div>
+			<div class="form-group">
+		    	<label for="custName">회원성명</label>
+		    	<input type="text" class="kor-val" id="custName" th:value="${userInfo.custName}" minlength="2" maxlength="10">
+			</div>
+		  	<div class="form-group">
+		    	<label for="phone">회원전화</label>
+		    	<input type="text" class="fix-length" id="phone" th:value="${userInfo.phone}" maxlength="13" placeholder="010-0000-0000">
+		  	</div>
+		  	<div class="form-group">
+		    	<label for="address">회원주소</label>
+		    	<input type="text" class="kor-val" id="address" th:value="${userInfo.address}" maxlength="30">
+		  	</div>
+			<div class="form-group">
+		    	<label for="strJoinDate">가입일자</label>
+		    	<input type="text" id="strJoinDate" th:value="${userInfo.joinDate}" readonly>
+			</div>
+			<div class="form-group">
+		    	<label for="grade">고객등급 [A:VIP, B:일반, C:직원]</label>
+			    <input type="text" class="user-grade-val" id="grade" th:value="${userInfo.grade}" maxlength="1">
+			</div>
+			<div class="form-group">
+		    	<label for="city">도시코드</label>
+			    <input type="text" class="fix-length" id="city" th:value="${userInfo.city}" maxlength="2">
+			</div>
+			<div class="btn-group">
+				<button onclick="confirmInput($(this).parent().parent(), '/update_action', '/userList');">수정</button>
+				<button onclick="location.href='/userList'">조회</button>
+			</div>
+		</div>
+    </section>
+    <div th:insert="/footer"></div>
+</body>
+</html>
